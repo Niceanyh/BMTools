@@ -3,9 +3,9 @@
 from langchain.llms.base import LLM
 from typing import Optional, List, Mapping, Any
 import torch
-from cpm_live.generation.bee import CPMBeeBeamSearch
-from cpm_live.models import CPMBeeTorch, CPMBeeConfig
-from cpm_live.tokenizers import CPMBeeTokenizer
+from bmtools.models.cpm_live.generation.bee import CPMBeeBeamSearch
+from bmtools.models.cpm_live.models import CPMBeeTorch, CPMBeeConfig
+from bmtools.models.cpm_live.tokenizers import CPMBeeTokenizer
 
 
 class CpmBeeLLM(LLM):
