@@ -7,8 +7,8 @@ tools_mappings = {
 
 tools = load_valid_tools(tools_mappings)
 # SET config_path and ckpt_path
-config_path = ""
-ckpt_path = ""
+config_path = "../Models/config.json"
+ckpt_path = "../Models/pytorch_model.bin"
 llm =CpmBeeLLM(config_path = config_path,  ckpt_path = ckpt_path, device="cuda")
 
 qa =  MTQuestionAnswerer(llm, all_tools=tools)
