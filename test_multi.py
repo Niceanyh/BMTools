@@ -15,4 +15,4 @@ qa =  MTQuestionAnswerer(llm, all_tools=tools)
 
 agent = qa.build_runner()
 
-agent("what is the weather in Beijing?")
+agent("what is the weather in Beijing right now?")
