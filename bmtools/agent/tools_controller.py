@@ -33,23 +33,20 @@ def load_valid_tools(tools_mappings):
 class MTQuestionAnswerer:
     """Use multiple tools to answer a question. Basically pass a natural question to 
     """
-    def __init__(self, openai_api_key, all_tools, stream_output=False, llm='ChatGPT'):
-        if len(openai_api_key) < 3: # not valid key (TODO: more rigorous checking)
-            openai_api_key = os.environ.get('OPENAI_API_KEY')
-        self.openai_api_key = openai_api_key
-        self.stream_output = stream_output
-        self.llm_model = llm
-        self.set_openai_api_key(openai_api_key)
-        self.load_tools(all_tools)
-    
-    def set_openai_api_key(self, key):
+    def __init__(self, base_llm, all_tools, stream_output=False):
+        """_summary_
+
+        Args:
+            base_llm (CpmBeeLLM): _Base LM_
+            all_tools (_type_): _tools to be used_
+            stream_output (bool, optional): _description_. Defaults to False.
+        """
+        # Add CPM-Bee to MTQuestionAnswerer
+        self.llm = base_llm
+        self.llm_model = base_llm.model_name
         logger.info("Using {}".format(self.llm_model))
-        if self.llm_model == "GPT-3.5":
-            self.llm = OpenAI(temperature=0.0, openai_api_key=key)  # use text-darvinci
-        elif self.llm_model == "ChatGPT":
-            self.llm = OpenAI(model_name="gpt-3.5-turbo", temperature=0.0, openai_api_key=key)  # use chatgpt
-        else:
-            raise RuntimeError("Your model is not available.")
+        self.stream_output = stream_output
+        self.load_tools(all_tools)
 
     def load_tools(self, all_tools):
         logger.info("All tools: {}".format(all_tools))
