@@ -121,8 +121,13 @@ if __name__ == "__main__":
     }
 
     tools = load_valid_tools(tools_mappings)
-    
-    qa =  MTQuestionAnswerer(openai_api_key='', all_tools=tools)
+    from bmtools.models.cpmbee_model import CpmBeeLLM
+    # SET config_path and ckpt_path
+    config_path = ""
+    ckpt_path = ""
+    llm =CpmBeeLLM(config_path = config_path,  ckpt_path = ckpt_path, device="cuda")
+
+    qa =  MTQuestionAnswerer(llm, all_tools=tools)
 
     agent = qa.build_runner()
     
