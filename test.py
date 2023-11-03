@@ -7,7 +7,7 @@ print(tool_name, tool_config)
 stqa =  STQuestionAnswerer()
 
 agent = stqa.load_tools(tool_name, tool_config, prompt_type="react-with-tool-description")
-agent("write a weather report for SF today")
+agent("write a weather report for London today")
 
 # BabyAGI
 # tool_name, tool_url = 'weather',  "http://127.0.0.1:8079/tools/weather/"

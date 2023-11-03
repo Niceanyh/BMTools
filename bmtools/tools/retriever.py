@@ -2,25 +2,32 @@ from langchain.embeddings import OpenAIEmbeddings
 from typing import List, Dict
 from queue import PriorityQueue
 import os
+from sentence_transformers import SentenceTransformer
 
 class Retriever:
     def __init__(self,
                  openai_api_key: str = None,
-                 model: str = "text-embedding-ada-002"):
+                 model: str = "sentence-transformers/all-MiniLM-L6-v2"):
         if openai_api_key is None:
             openai_api_key = os.environ.get("OPENAI_API_KEY")
-        self.embed = OpenAIEmbeddings(openai_api_key=openai_api_key, model=model)
+        self.embed =SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
+        #self.embed = OpenAIEmbeddings(openai_api_key=openai_api_key, model=model)
         self.documents = dict()
+        print("sentence embedding init done!")
 
     def add_tool(self, tool_name: str, api_info: Dict) -> None:
         if tool_name in self.documents:
             return
+        print("-- begin embeding..")
         document = api_info["name_for_model"] + ". " + api_info["description_for_model"]
-        document_embedding = self.embed.embed_documents([document])
+        print(document)
+        document_embedding = self.embed.encode([document])
+        print(document_embedding)
         self.documents[tool_name] = {
             "document": document,
             "embedding": document_embedding[0]
         }
+        print("-- embedding done")
 
     def query(self, query: str, topk: int = 3) -> List[str]:
         query_embedding = self.embed.embed_query(query)

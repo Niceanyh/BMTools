@@ -2,13 +2,13 @@ from bmtools.agent.tools_controller import load_valid_tools, MTQuestionAnswerer
 from bmtools.models.cpmbee_model import CpmBeeLLM
 tools_mappings = {
     'weather': "http://127.0.0.1:8079/tools/weather/",
-    'file_operation': "http://127.0.0.1:8079/tools/file_operation/",
+    'wolframalpha': "http://127.0.0.1:8079/tools/wolframalpha/",
 }
 
 tools = load_valid_tools(tools_mappings)
 # SET config_path and ckpt_path
-config_path = "../Models/config.json"
-ckpt_path = "../Models/pytorch_model.bin"
+config_path = "../Models/cpm-bee/config.json"
+ckpt_path = "../Models/cpm-bee/pytorch_model.bin"
 llm =CpmBeeLLM(config_path = config_path,  ckpt_path = ckpt_path, device="cuda")
 
 qa =  MTQuestionAnswerer(llm, all_tools=tools)

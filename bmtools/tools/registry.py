@@ -14,6 +14,7 @@ class ToolsRegistry:
         self.tools[tool_name] = tool
     
     def build(self, tool_name, config) -> Tool:
+        print("BUILDING...1")
         ret = self.tools[tool_name]()(config)
         if isinstance(ret, Tool):
             return ret
