@@ -31,7 +31,7 @@ def load_valid_tools(tools_mappings):
 
 
 class MTQuestionAnswerer:
-    """Use multiple tools to answer a question. Basically pass a natural question to 
+    """Use multiple tools to answer a question. Basically pass a natural question.
     """
     def __init__(self, base_llm, all_tools, stream_output=False):
         """_summary_
@@ -42,9 +42,9 @@ class MTQuestionAnswerer:
             stream_output (bool, optional): _description_. Defaults to False.
         """
         # Add CPM-Bee to MTQuestionAnswerer
-        self.llm = base_llm
-        self.llm_model = base_llm.model_name
-        logger.info("Using {}".format(self.llm_model))
+        self.llm = llm
+        self.llm_name = llm.model_name
+        logger.info("Using {}".format(self.llm_name))
         self.stream_output = stream_output
         self.load_tools(all_tools)
 
@@ -55,7 +55,7 @@ class MTQuestionAnswerer:
         for name in all_tools:
             meta_info = all_tools[name]
 
-            question_answer = STQuestionAnswerer(self.openai_api_key, stream_output=self.stream_output, llm=self.llm_model)
+            question_answer = STQuestionAnswerer(self.llm, stream_output=self.stream_output)
             subagent = question_answer.load_tools(name, meta_info, prompt_type="react-with-tool-description", return_intermediate_steps=False)
             tool_logo_md = f'<img src="{meta_info["logo_url"]}" width="32" height="32" style="display:inline-block">'
             for tool in subagent.tools:
@@ -68,23 +68,26 @@ class MTQuestionAnswerer:
             tool.tool_logo_md = tool_logo_md
             self.tools_pool.append(tool)
         
-    def build_runner(self, ):
+    def build_runner(self,):
         from langchain.vectorstores import FAISS
         from langchain.docstore import InMemoryDocstore
         from langchain.embeddings import OpenAIEmbeddings
-        embeddings_model = OpenAIEmbeddings()
+        
+        from sentence_transformers import SentenceTransformer
+
+        embeddings_model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
+        # embeddings_model = OpenAIEmbeddings()
         import faiss
-        embedding_size = 1536
+        embedding_size = 384
         index = faiss.IndexFlatL2(embedding_size)
         vectorstore = FAISS(embeddings_model.embed_query, index, InMemoryDocstore({}), {})
         
         from .autogptmulti.agent import AutoGPT
-        from langchain.chat_models import ChatOpenAI
         agent_executor = AutoGPT.from_llm_and_tools(
             ai_name="Tom",
             ai_role="Assistant",
             tools=self.tools_pool,
-            llm=ChatOpenAI(temperature=0),
+            llm=self.llm,
             memory=vectorstore.as_retriever()
         )
         '''
@@ -123,8 +126,8 @@ if __name__ == "__main__":
     tools = load_valid_tools(tools_mappings)
     from bmtools.models.cpmbee_model import CpmBeeLLM
     # SET config_path and ckpt_path
-    config_path = ""
-    ckpt_path = ""
+    config_path = "../Models/cpm-bee/config.json"
+    ckpt_path = "../Models/cpm-bee/pytorch_model.bin"
     llm =CpmBeeLLM(config_path = config_path,  ckpt_path = ckpt_path, device="cuda")
 
     qa =  MTQuestionAnswerer(llm, all_tools=tools)

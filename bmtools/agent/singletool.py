@@ -65,27 +65,11 @@ def load_single_tools(tool_name, tool_url):
 
 
 class STQuestionAnswerer:
-    def __init__(self, openai_api_key = "", stream_output=False, llm='ChatGPT'):
-        if len(openai_api_key) < 3: # not valid key (TODO: more rigorous checking)
-            openai_api_key = os.environ.get('OPENAI_API_KEY')
-
-        self.openai_api_key = openai_api_key
-        self.llm_model = llm
-
-        self.set_openai_api_key(openai_api_key)
+    def __init__(self, llm, stream_output=False):
+        self.llm = llm
+        self.llm_name = llm.model_name
         self.stream_output = stream_output
         
-     
-    
-    def set_openai_api_key(self, key):
-        logger.info("Using {}".format(self.llm_model))
-        
-        if self.llm_model == "GPT-3.5":
-            self.llm = OpenAI(temperature=0.0, openai_api_key=key)  # use text-darvinci
-        elif self.llm_model == "ChatGPT":
-            self.llm = OpenAI(model_name="gpt-3.5-turbo", temperature=0.0, openai_api_key=key)  # use chatgpt
-        else:
-            raise RuntimeError("Your model is not available.")
         
     def load_tools(self, name, meta_info, prompt_type="react-with-tool-description", return_intermediate_steps=True):
 
