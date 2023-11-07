@@ -1,42 +1,15 @@
-from bmtools.agent.singletool import load_single_tools, STQuestionAnswerer
+from langchain.embeddings import HuggingFaceEmbeddings
+import faiss
+embedding_size = 384
+embeddings_model = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+#embeddings_model = TensorflowHubEmbeddings()
 
-# Langchain
-tool_name, tool_url = 'weather',  "http://127.0.0.1:8079/tools/weather/"
-tool_name, tool_config = load_single_tools(tool_name, tool_url)
-print(tool_name, tool_config)
-stqa =  STQuestionAnswerer()
+text = "This is a test document."
+query_result = embeddings_model.embed_query(text)
+doc_result = embeddings_model.embed_documents([text])
 
-agent = stqa.load_tools(tool_name, tool_config, prompt_type="react-with-tool-description")
-agent("write a weather report for London today")
+print(query_result)
+print(doc_result)
 
-# BabyAGI
-# tool_name, tool_url = 'weather',  "http://127.0.0.1:8079/tools/weather/"
-# tool_name, tool_config = load_single_tools(tool_name, tool_url)
-# print(tool_name, tool_config)
-# stqa =  STQuestionAnswerer()
-
-# agent = stqa.load_tools(tool_name, tool_config, prompt_type="babyagi")
-# agent("write a weather report for SF today")
-
-# Auto-GPT
-# tool_name, tool_url = 'weather',  "http://127.0.0.1:8079/tools/weather/"
-# tool_name, tool_config = load_single_tools(tool_name, tool_url)
-# print(tool_name, tool_config)
-# stqa =  STQuestionAnswerer()
-
-# agent = stqa.load_tools(tool_name, tool_config, prompt_type="autogpt")
-# agent.run(["write a weather report for SF today"])
-
-
-""" 
-from bmtools.agent.singletool import load_single_tools, STQuestionAnswerer
-
-tool_name, tool_url = 'wikipedia',  "http://127.0.0.1:8079/tools/wikipedia/"
-tool_name, tool_config = load_single_tools(tool_name, tool_url)
-print(tool_name, tool_config)
-stqa =  STQuestionAnswerer()
-
-agent = stqa.load_tools(tool_name, tool_config, prompt_type="babyagi")
-# agent = stqa.load_tools(tool_name, tool_config, prompt_type="react-with-tool-description")# prompt_type="babyagi")
-agent("Where is Yaoming Born?")
-"""
+index = faiss.IndexFlatL2(embedding_size)
+vectorstore = FAISS(embeddings_model.embed_query, index, InMemoryDocstore({}), {})

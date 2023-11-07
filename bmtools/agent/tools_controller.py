@@ -72,13 +72,15 @@ class MTQuestionAnswerer:
         from langchain.vectorstores import FAISS
         from langchain.docstore import InMemoryDocstore
         from langchain.embeddings import OpenAIEmbeddings
-        
+        from langchain.embeddings import TensorflowHubEmbeddings
         from sentence_transformers import SentenceTransformer
+        from langchain.embeddings import HuggingFaceEmbeddings
 
-        embeddings_model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
         # embeddings_model = OpenAIEmbeddings()
         import faiss
         embedding_size = 384
+        embeddings_model = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+        #embeddings_model = TensorflowHubEmbeddings()
         index = faiss.IndexFlatL2(embedding_size)
         vectorstore = FAISS(embeddings_model.embed_query, index, InMemoryDocstore({}), {})
         
