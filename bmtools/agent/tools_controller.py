@@ -78,8 +78,9 @@ class MTQuestionAnswerer:
 
         # embeddings_model = OpenAIEmbeddings()
         import faiss
-        embedding_size = 384
-        embeddings_model = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+        embedding_size = 768
+        embeddings_model = HuggingFaceEmbeddings(model_name="all-mpnet-base-v2",
+    cache_folder="/home/cc/workspace/ximu/workspace/yh/Models/all-mpnet-base-v2")
         #embeddings_model = TensorflowHubEmbeddings()
         index = faiss.IndexFlatL2(embedding_size)
         vectorstore = FAISS(embeddings_model.embed_query, index, InMemoryDocstore({}), {})
