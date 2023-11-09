@@ -99,7 +99,7 @@ class AutoGPT:
             if pos>0:
                 assistant_reply = assistant_reply[pos:]
             # Print Assistant thoughts
-            print(assistant_reply)
+            print("----test-----assistant_reply:\n"+assistant_reply)
             self.full_message_history.append(HumanMessage(content=user_input))
             self.full_message_history.append(AIMessage(content=assistant_reply))
 

@@ -102,7 +102,6 @@ class STQuestionAnswerer:
                 input_variables=["input", "agent_scratchpad"]
             )
             llm_chain = LLMChain(llm=self.llm, prompt=prompt)
-            # llm_chain = LLMChain(llm=customllm, prompt=prompt)
             logger.info("Full prompt template: {}".format(prompt.template))
             tool_names = [tool.name for tool in self.all_tools_map[name] ]
             agent = ZeroShotAgent(llm_chain=llm_chain, allowed_tools=tool_names)

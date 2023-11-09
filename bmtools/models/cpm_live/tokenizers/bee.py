@@ -15,6 +15,7 @@
 
 import pkg_resources
 import io
+import bmtools.models.cpm_live as cl
 from typing import IO, Dict, List, Optional, Tuple
 
 
@@ -59,7 +60,7 @@ class CPMBeeTokenizer(object):
         self.line_token = "\n"
         self.space_token = " "
 
-        self.encoder = load_vocab(pkg_resources.resource_stream("cpm_live", "vocabs/bee.txt"))
+        self.encoder = load_vocab(pkg_resources.resource_stream("bmtools.models.cpm_live", "vocabs/bee.txt"))
         self.encoder[self.line_token] = self.encoder["</n>"]
         self.encoder[self.space_token] = self.encoder["</_>"]
         del self.encoder["</n>"]

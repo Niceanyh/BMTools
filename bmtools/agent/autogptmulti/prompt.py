@@ -10,14 +10,22 @@ from langchain.prompts.chat import (
 from langchain.schema import BaseMessage, HumanMessage, SystemMessage
 from langchain.tools.base import BaseTool
 from langchain.vectorstores.base import VectorStoreRetriever
+from bmtools.models.cpm_live.tokenizers import CPMBeeTokenizer
+
+
+def custom_token_counter(input,tokenizer=CPMBeeTokenizer()):
+    return len(tokenizer.encode(input))
 
 
 class AutoGPTPrompt(BaseChatPromptTemplate, BaseModel):
     ai_name: str
     ai_role: str
     tools: List[BaseTool]
-    token_counter: Callable[[str], int]
+    #token_counter: Callable[[str], int] = custom_token_counter
     send_token_limit: int = 4196
+    class Config:
+        extra = "allow"  # 允许额外的字段
+
 
     def construct_full_prompt(self, goals: List[str]) -> str:
         prompt_start = """Your decisions must always be made independently
@@ -43,9 +51,8 @@ class AutoGPTPrompt(BaseChatPromptTemplate, BaseModel):
         time_prompt = SystemMessage(
             content=f"The current time and date is {time.strftime('%c')}"
         )
-        used_tokens = self.token_counter(base_prompt.content) + self.token_counter(
-            time_prompt.content
-        )
+        #used_tokens = self.token_counter(base_prompt.content) +  self.token_counter(time_prompt.content)
+        used_tokens = custom_token_counter(base_prompt.content) + custom_token_counter(time_prompt.content)
         memory: VectorStoreRetriever = kwargs["memory"]
         previous_messages = kwargs["messages"]
 
@@ -57,7 +64,7 @@ class AutoGPTPrompt(BaseChatPromptTemplate, BaseModel):
         used_tokens += len(memory_message.content)
         historical_messages: List[BaseMessage] = []
         for message in previous_messages[-10:][::-1]:
-            message_tokens = self.token_counter(message.content)
+            message_tokens = custom_token_counter(message.content)
             if used_tokens + message_tokens > self.send_token_limit - 1000:
                 break
             historical_messages = [message] + historical_messages

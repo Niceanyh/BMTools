@@ -20,10 +20,8 @@ class CpmBeeLLM(LLM):
         super().__init__()
         self.model_name = ckpt_path
         self.config = CPMBeeConfig.from_json_file(config_path)
-        #self.tokenizer = CPMBeeTokenizer()
-        print("loadding model..")
+        self.tokenizer = CPMBeeTokenizer()
         self.model = CPMBeeTorch(config=self.config)
-        print("config load done.")
         self.model.load_state_dict(torch.load(ckpt_path))
 
         if device == "cuda":
