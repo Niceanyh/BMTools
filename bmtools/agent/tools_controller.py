@@ -33,7 +33,7 @@ def load_valid_tools(tools_mappings):
 class MTQuestionAnswerer:
     """Use multiple tools to answer a question. Basically pass a natural question.
     """
-    def __init__(self, base_llm, all_tools, stream_output=False):
+    def __init__(self, llm, all_tools, stream_output=False):
         """_summary_
 
         Args:
@@ -54,7 +54,6 @@ class MTQuestionAnswerer:
         self.tools_pool = []
         for name in all_tools:
             meta_info = all_tools[name]
-
             question_answer = STQuestionAnswerer(self.llm, stream_output=self.stream_output)
             subagent = question_answer.load_tools(name, meta_info, prompt_type="react-with-tool-description", return_intermediate_steps=False)
             tool_logo_md = f'<img src="{meta_info["logo_url"]}" width="32" height="32" style="display:inline-block">'
