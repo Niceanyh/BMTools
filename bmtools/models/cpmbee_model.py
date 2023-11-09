@@ -3,6 +3,7 @@
 from langchain.llms.base import LLM
 from typing import Optional, List, Mapping, Any
 import torch
+from tqdm import tqdm
 from bmtools.models.cpm_live.generation.bee import CPMBeeBeamSearch
 from bmtools.models.cpm_live.models import CPMBeeTorch, CPMBeeConfig
 from bmtools.models.cpm_live.tokenizers import CPMBeeTokenizer
@@ -19,10 +20,12 @@ class CpmBeeLLM(LLM):
         super().__init__()
         self.model_name = ckpt_path
         self.config = CPMBeeConfig.from_json_file(config_path)
-        self.tokenizer = CPMBeeTokenizer()
+        #self.tokenizer = CPMBeeTokenizer()
+        print("loadding model..")
         self.model = CPMBeeTorch(config=self.config)
-
+        print("config load done.")
         self.model.load_state_dict(torch.load(ckpt_path))
+
         if device == "cuda":
             self.model.cuda()
 
