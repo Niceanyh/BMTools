@@ -5,7 +5,8 @@ tools_mappings = {
     'wolframalpha': "http://127.0.0.1:8079/tools/wolframalpha/",
 }
 
-#tools = load_valid_tools(tools_mappings)
+tools = load_valid_tools(tools_mappings)
+print(tools)
 # SET config_path and ckpt_path
 config_path = "/home/cc/workspace/ximu/workspace/yh/Models/cpm-bee/config.json"
 ckpt_path = "/home/cc/workspace/ximu/workspace/yh/Models/cpm-bee/pytorch_model.bin"

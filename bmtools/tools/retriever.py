@@ -3,31 +3,27 @@ from typing import List, Dict
 from queue import PriorityQueue
 import os
 from sentence_transformers import SentenceTransformer
+from langchain.embeddings import HuggingFaceEmbeddings
+HuggingFaceEmbeddings
 
 class Retriever:
     def __init__(self,
                  openai_api_key: str = None,
-                 model: str = "sentence-transformers/all-MiniLM-L6-v2"):
-        if openai_api_key is None:
-            openai_api_key = os.environ.get("OPENAI_API_KEY")
-        self.embed =SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
+                 model_name: str ="all-mpnet-base-v2"):
+        self.embed = HuggingFaceEmbeddings(model_name=model_name,
+            cache_folder="/home/cc/workspace/ximu/workspace/yh/Models/all-mpnet-base-v2")
         #self.embed = OpenAIEmbeddings(openai_api_key=openai_api_key, model=model)
         self.documents = dict()
-        print("sentence embedding init done!")
 
     def add_tool(self, tool_name: str, api_info: Dict) -> None:
         if tool_name in self.documents:
             return
-        print("-- begin embeding..")
         document = api_info["name_for_model"] + ". " + api_info["description_for_model"]
-        print(document)
-        document_embedding = self.embed.encode([document])
-        print(document_embedding)
+        document_embedding = self.embed.embed_query(document)
         self.documents[tool_name] = {
             "document": document,
-            "embedding": document_embedding[0]
+            "embedding": document_embedding
         }
-        print("-- embedding done")
 
     def query(self, query: str, topk: int = 3) -> List[str]:
         query_embedding = self.embed.embed_query(query)
